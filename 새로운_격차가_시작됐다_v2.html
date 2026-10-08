@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="AI 활용 능력은 곧 생존 격차다 — 선택이 아닌 필수">
+<title>새로운 격차가 시작됐다 — 이번엔 AI다</title>
+<style>
+:root{
+  --ink:#17231d;   --muted:#65716a;  --paper:#f4f1e9;
+  --lime:#c9f450;  --line:#d4d8d0;
+  --blue:#337fe5;  --red:#c74740;    --green:#167746;
+  --soft:#eef1ec;  --soft-2:#f8f7f2; --track:#e9ece8;
+  --on-ink:#c5cec8; --prompt-bg:#132019;
+  --zoom:1;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;
+  background:var(--paper);color:var(--ink);
+  font-family:Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  word-break:keep-all;overflow-wrap:normal;line-break:strict}
+.deck{height:100%;min-height:640px;padding:26px 4.5vw 20px;
+  display:grid;grid-template-rows:auto 1fr auto;background:var(--paper)}
+header,footer{display:flex;align-items:center;justify-content:space-between}
+.brand,.kicker{font-size:11px;font-weight:850;letter-spacing:.14em}
+.count{font:700 12px ui-monospace;color:var(--muted)}
+footer{gap:18px}
+.progress{height:2px;flex:1;background:#d8dcd4}
+.progress i{display:block;height:100%;background:var(--ink)}
+.hint{font-size:11px;color:#8a928e}
+.nav{display:flex}
+.nav button{width:38px;height:38px;border:0;border-radius:50%;
+  background:transparent;font-size:20px;cursor:pointer}
+.nav button:disabled{opacity:.25}
+.slide{display:none;margin:auto;align-items:center;gap:5vw;
+  width:min(1280px,calc(100% / var(--zoom,1)))}
+.slide.active{display:grid;animation:enter .3s ease-out;
+  transform:scale(var(--zoom,1));transform-origin:center center}
+.one{grid-template-columns:1fr}
+.two{grid-template-columns:.9fr 1.1fr}
+@keyframes enter{from{opacity:0;transform:translateY(8px) scale(var(--zoom,1))}
+                 to{opacity:1;transform:scale(var(--zoom,1))}}
+.copy{max-width:800px}
+.kicker{margin:0 0 18px;color:#506b40}
+.slide h1,.slide h2{margin:0;letter-spacing:-.048em}
+.slide h1{font-size:clamp(45px,5vw,70px);line-height:1.07}
+.slide h2{font-size:clamp(35px,4vw,55px);line-height:1.12}
+.slide h3{margin:0;font-size:24px}
+.dense h1{font-size:clamp(33px,3vw,43px)}
+.body{max-width:740px;margin:22px 0 0;font-size:18px;line-height:1.65;color:var(--muted)}
+.accent{background:linear-gradient(transparent 64%,var(--lime) 64%)}
+.nowrap{white-space:nowrap}
+.title{grid-template-columns:1fr}
+.title .copy{max-width:1100px}
+.title h1{font-size:clamp(50px,5.7vw,78px);line-height:1.04}
+.title .body{font-size:21px}
+.close{margin-top:23px;font-size:21px;font-weight:850}
+.close span{border-bottom:7px solid var(--lime)}
+.card{padding:26px;background:#fff;border:1px solid var(--line)}
+.card.top{border:0;border-top:5px solid var(--ink)}
+.card h3{margin:0 0 16px}
+.card p{margin:0;font-size:15px;line-height:1.6;color:var(--muted)}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.trio .card,.duo .card{min-height:230px}
+.band{margin-top:14px;padding:16px 20px;background:var(--ink);color:#fff;
+  display:flex;justify-content:space-between;align-items:center;font-weight:850;font-size:15px}
+.band b{color:var(--lime);font-size:25px}
+.band.lime{background:var(--lime);color:var(--ink);display:block;text-align:center;font-size:16px}
+.band.full{grid-column:1/-1;margin-top:0;display:block;text-align:center;font-size:16px}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center}
+.flow span,.flow strong{padding:13px 10px;background:var(--soft);text-align:center;font-size:13px;font-weight:800}
+.flow strong{background:var(--ink);color:#fff}
+.flow i{font-style:normal;color:var(--muted)}
+.steps{padding:25px;background:#fff;border:1px solid var(--line)}
+.steps>div{display:grid;grid-template-columns:42px 1fr;gap:13px;align-items:center;
+  padding:16px 0;border-top:1px solid var(--line)}
+.steps>div:first-child{border-top:0}
+.steps b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;
+  background:var(--ink);color:#fff;font-size:12px}
+.steps strong{display:block;font-size:17px}
+.steps span{display:block;margin-top:5px;color:var(--muted);font-size:13px}
+.stat{display:flex;align-items:center;gap:22px;line-height:1}
+.stat span{font-size:70px;color:#939c96;font-weight:850}
+.stat i{font-style:normal;font-size:39px;color:#8c958f}
+.stat strong{font-size:104px;color:var(--ink);
+  background:linear-gradient(transparent 68%,var(--lime) 68%)}
+.tools{display:flex;gap:6px}
+.edit-btn{padding:8px 13px;border:1px solid var(--line);border-radius:0;background:#fff;
+  color:var(--ink);font:800 11px/1 Arial;letter-spacing:.08em;cursor:pointer}
+.edit-btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.edit-note{align-self:center;max-width:300px;font:700 11px/1.4 Arial;color:#8a928e}
+.editing [data-edit]{cursor:text}
+.editing [data-edit]:hover{box-shadow:inset 0 0 0 1px var(--lime)}
+.editing [data-edit]:focus{outline:2px solid var(--lime);outline-offset:3px;box-shadow:none}
+@media(max-width:900px){
+  .deck{padding:20px}
+  .slide.active{grid-template-columns:1fr;gap:24px}
+  .slide h1{font-size:42px}
+  .title h1{font-size:49px}
+}
+@media(max-width:600px){
+  .title h1,.slide h1{font-size:33px}
+  .slide h2{font-size:30px}
+  .trio,.duo,.flow{grid-template-columns:1fr}
+  .flow i,.hint{display:none}
+  .nowrap{white-space:normal}
+  .band.full{grid-column:auto}
+  .stat strong{font-size:65px}
+  .tools .edit-btn:not(#edit){display:none}
+}
+</style>
+</head>
+<body>
+<main class="deck">
+
+<header>
+  <div class="brand">AX</div>
+  <div class="count"><span id="current">01</span> / <span id="total">20</span></div>
+</header>
+
+<!-- 01 표지 -->
+<section class="slide active title">
+  <div class="copy">
+    <p class="kicker">AX:IS(액시스) · AI 자기계발·교류 동아리</p>
+    <h1>새로운 격차가 시작됐다<br><span class="accent">이번엔 AI다</span></h1>
+    <p class="body">AI 활용 능력은 곧 생존 격차다 — 선택이 아닌 필수</p>
+  </div>
+</section>
+
+<!-- 02 AX:IS 동아리 소개 -->
+<section class="slide one">
+  <div class="copy">
+    <p class="kicker">우리는 누구인가</p>
+    <h2><span class="accent">AX:IS</span> 액시스</h2>
+    <p class="body">AI Transformation 시대의 중심축이 되어, 서로 배우고 나누며 함께 성장하는 사람들.</p>
+  </div>
+  <div>
+    <div class="duo">
+      <div class="card top" style="min-height:0">
+        <h3 style="font-size:28px;font-weight:850;letter-spacing:-.03em;margin-bottom:16px">AX</h3>
+        <p style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:8px">AI Transformation</p>
+        <p>AI를 단순히 사용하는 것을 넘어, 학습과 일상의 방식을 AI 중심으로 변화시키는 AX 시대를 의미한다.</p>
+      </div>
+      <div class="card top" style="min-height:0">
+        <h3 style="font-size:28px;font-weight:850;letter-spacing:-.03em;margin-bottom:16px">IS</h3>
+        <p style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:8px">Inspire &amp; Share</p>
+        <p>서로에게 영감을 주고(Inspire), AI 활용 경험과 지식을 나누며(Share) 함께 성장한다는 의미.</p>
+      </div>
+    </div>
+    <div class="band full">AI Transformation(AX) 시대를 함께 준비하고, Inspire &amp; Share(IS)를 통해 지식과 경험을 공유하며 성장하는 AI 자기계발·교류 동아리</div>
+  </div>
+</section>
+
+<!-- 03 자가진단 — 우리는 AI를 어느 수준으로 쓰고 있나 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>우리는 AI를 <span class="accent">어느 수준</span>으로 쓰고 있나</h1>
+    <p class="body">도구를 갖고 있다는 것과, 그 도구로 일한다는 건 다른 말이다.</p>
+  </div>
+  <div>
+    <div class="duo">
+      <div class="card" style="min-height:0">
+        <h3 style="font-size:13px;color:var(--muted);font-weight:850;margin-bottom:10px">대부분의 현실</h3>
+        <p style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px">가끔 검색 대신 쓴다</p>
+        <p>궁금한 것을 물어보거나, 초안을 한 번 받아본다. 그게 전부다.</p>
+      </div>
+      <div class="card" style="min-height:0;border-top:5px solid var(--ink);border-left:none;border-right:none;border-bottom:none">
+        <h3 style="font-size:13px;color:var(--muted);font-weight:850;margin-bottom:10px">격차가 벌어지는 쪽</h3>
+        <p style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px">반복 업무를 맡긴다</p>
+        <p>보고서·공문·안내문·데이터 정리를 AI가 처리하고, 사람은 판단만 한다.</p>
+      </div>
+    </div>
+    <div class="band full">같은 시간, 다른 결과 — 차이는 어떻게 쓰느냐에서 온다</div>
+  </div>
+</section>
+
+<!-- 03 현실 — AI가 업무량을 줄인 게 아니라 기대치를 올렸다 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>AI는 업무를 줄인 게 아니라<br><span class="accent">기대치를 올렸다</span></h1>
+    <p class="body">생산성이 높아졌다는 건, 같은 시간에 더 많은 것을 요구받는다는 뜻이기도 하다.</p>
+  </div>
+  <div>
+    <div class="steps">
+      <div><b>01</b><div><strong>AI가 초안을 쓰는 시대가 됐다</strong><span>공문, 보고서, 안내문 — 작성 시간이 10분의 1로 줄었다</span></div></div>
+      <div><b>02</b><div><strong>조직의 기대치가 따라서 올라갔다</strong><span>"이제 AI 쓰면 되잖아요" — 더 빠르게, 더 많이 요구한다</span></div></div>
+      <div><b>03</b><div><strong>못 쓰는 사람만 그대로다</strong><span>기대치는 올라갔는데, 생산성은 그대로 — 격차가 여기서 생긴다</span></div></div>
+    </div>
+    <div class="band lime">도구가 생긴 순간, 그 도구를 못 쓰는 것이 불리함이 된다</div>
+  </div>
+</section>
+
+<!-- 04 AI가 수학 올림피아드에서 은메달을 땄다 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>AI가 수능에서<br><span class="accent">전 과목 만점</span>을 받았다</h1>
+    <p class="body">수험생이 수년간 준비하는 시험을, AI가 처음 보고 만점을 받는 시대가 됐다.</p>
+  </div>
+  <div>
+    <div class="steps">
+      <div><b>01</b><div><strong>2026년 — Gemini 3.1, 수능 전 과목 만점</strong><span>국어·수학·영어·탐구 전 과목 만점 최초 달성 · 역대 수능 최고 난도 기준</span></div></div>
+      <div><b>02</b><div><strong>수학뿐 아니라 국어·사회·과학까지</strong><span>언어 이해·추론·상식까지 — AI가 대한민국 입시를 통과한 것이다</span></div></div>
+      <div><b>03</b><div><strong>수험생은 수년을 준비한다 — AI는 처음 봤다</strong><span>반복 학습·시간·스트레스 없이 단 한 번에 — 이것이 지금 AI의 수준이다</span></div></div>
+    </div>
+    <div class="band lime">수능 만점은 전국 수험생 중 수십 명만 받는 수준이다</div>
+  </div>
+</section>
+
+<!-- 05 10년 후 AI가 푼 문제를 검증할 수 있는 사람이 있을까 -->
+<section class="slide one">
+  <div class="copy">
+    <h2>10년 후, AI가 푼 문제를 <span class="accent">검증할 수 있는</span> 사람이 있을까</h2>
+    <p class="body">AI가 발전하는 속도보다 인간이 따라가는 속도가 느려지고 있다.</p>
+  </div>
+  <div>
+    <div class="duo">
+      <div class="card" style="min-height:0">
+        <h3 style="font-size:14px;color:var(--muted);font-weight:850;margin-bottom:10px">지금 현실</h3>
+        <p style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px">수학 난제를 검증할 수 있는 수학자는 전 세계 100명 수준</p>
+        <p>AI가 증명한 수식이 맞는지 확인하려면 그 분야 최고 전문가가 수개월을 검토해야 한다</p>
+      </div>
+      <div class="card" style="min-height:0;border-top:5px solid var(--ink);border-left:none;border-right:none;border-bottom:none">
+        <h3 style="font-size:14px;color:var(--muted);font-weight:850;margin-bottom:10px">10년 후 질문</h3>
+        <p style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px">AI가 매일 난제를 풀어낼 때, 그것을 검증할 사람이 남아있을까</p>
+        <p>수학뿐 아니라 법률·의학·공학에서도 같은 질문이 시작되고 있다</p>
+      </div>
+    </div>
+    <div class="band full">AI가 이미 인간만큼, 일부 영역에서는 인간 이상으로 똑똑해졌다</div>
+  </div>
+</section>
+
+<!-- 구 04 → 06 전환점 — 왜 이번 AI는 다른가 -->
+<section class="slide one">
+  <div class="copy">
+    <h2>왜 이번 AI는 <span class="accent">다른가</span></h2>
+    <p class="body">전기·인터넷처럼, AI는 도구가 아니라 새로운 인프라다.</p>
+  </div>
+  <div>
+    <div class="flow">
+      <span><b style="display:block;font-size:18px;margin-bottom:4px">산업혁명</b>기계가 몸을 대체</span>
+      <i>→</i>
+      <span><b style="display:block;font-size:18px;margin-bottom:4px">인터넷</b>정보 접근을 평등화</span>
+      <i>→</i>
+      <strong><b style="display:block;font-size:18px;margin-bottom:4px">AI</b>지식 노동 자체를 대체</strong>
+    </div>
+    <div class="band">이번엔 <b>생각하는 일</b>이 자동화된다 — 행정·기획·문서 작업이 전부 포함된다</div>
+  </div>
+</section>
+
+<!-- 05 격차 — AI 활용 능력 격차 = 새로운 계층 격차 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>AI 활용 격차는<br><span class="accent">새로운 계층 격차</span>다</h1>
+    <p class="body">부의 격차처럼, AI 활용 능력 차이는 기회의 차이로 이어진다.</p>
+  </div>
+  <div>
+    <div class="duo">
+      <div class="card" style="min-height:260px;background:var(--soft-2)">
+        <h3>AI를 못 쓰는 사람</h3>
+        <p style="margin-top:12px">· 반복 업무에 시간을 쓴다<br>· 같은 산출물을 더 오래 만든다<br>· 조직에서 점점 뒤처진다<br>· 대체 가능성이 높아진다</p>
+      </div>
+      <div class="card" style="min-height:260px;border-top:5px solid var(--ink);border-left:none;border-right:none;border-bottom:none">
+        <h3>AI를 잘 쓰는 사람</h3>
+        <p style="margin-top:12px">· 반복 업무를 AI에 위임한다<br>· 판단과 기획에 집중한다<br>· 같은 시간에 더 많은 성과<br>· 조직에서 없어서는 안 되는 사람</p>
+      </div>
+    </div>
+    <div class="band full">같은 직급, 같은 연차 — 그러나 5년 후 결과는 완전히 다르다</div>
+  </div>
+</section>
+
+<!-- 08 세계 기관 숫자 근거 — 강화版 -->
+<section class="slide one">
+  <div class="copy">
+    <h2>숫자가 <span class="accent">이미 말하고 있다</span></h2>
+    <p class="body">전망이 아니다. 지금 이 순간 기업들이 인력을 줄이고 있다.</p>
+  </div>
+  <div>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin-top:8px">
+      <div style="padding:26px 22px;background:var(--ink);color:#fff;border:1px solid var(--line)">
+        <div style="font-size:62px;font-weight:850;line-height:1;background:linear-gradient(transparent 68%,var(--lime) 68%);display:inline-block;color:#fff">3억 명</div>
+        <p style="margin:12px 0 0;font-size:14px;font-weight:800;color:#c5cec8">지금 AI 영향권에 들어간 일자리</p>
+        <p style="margin:6px 0 0;font-size:12px;color:#65716a;font-weight:700">Goldman Sachs 2023</p>
+        <p style="margin:10px 0 0;font-size:13px;color:var(--lime);font-weight:800">전체 직종의 2/3가 노출</p>
+      </div>
+      <div style="padding:22px 18px;background:#fff;border:1px solid var(--line)">
+        <div style="font-size:54px;font-weight:850;color:var(--ink);line-height:1;background:linear-gradient(transparent 68%,var(--lime) 68%);display:inline-block">700명</div>
+        <p style="margin:10px 0 0;font-size:13px;font-weight:800;color:var(--ink)">AI 챗봇 1대가 대체한 직원 수</p>
+        <p style="margin:6px 0 0;font-size:11px;color:#aab3af;font-weight:700">Klarna · 실제 적용 사례</p>
+        <p style="margin:10px 0 0;font-size:12px;font-weight:800;color:var(--muted)">4,000명 → 2,000명 목표</p>
+      </div>
+      <div style="padding:22px 18px;background:#fff;border:1px solid var(--line)">
+        <div style="font-size:54px;font-weight:850;color:var(--ink);line-height:1;background:linear-gradient(transparent 68%,var(--lime) 68%);display:inline-block">90%</div>
+        <p style="margin:10px 0 0;font-size:13px;font-weight:800;color:var(--ink)">AI 에이전트 도입 후 업무 단축률</p>
+        <p style="margin:6px 0 0;font-size:11px;color:#aab3af;font-weight:700">McKinsey · 삼일PwC 보고서</p>
+        <p style="margin:10px 0 0;font-size:12px;font-weight:800;color:var(--muted)">같은 인력 → 10배 업무량</p>
+      </div>
+    </div>
+    <div class="band">AI는 <b>채용을 멈추고</b> 있다 — 같은 일을 더 적은 사람으로 처리하는 시대가 왔다</div>
+  </div>
+</section>
+
+<!-- 07 기업 인력 감축 사례 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>기업들이 <span class="accent">이미</span> 움직였다</h1>
+    <p class="body">뉴스가 아니라 숫자로 확인된 실제 사례들이다.</p>
+  </div>
+  <div>
+    <div class="steps">
+      <div><b>01</b><div><strong>Klarna — AI 챗봇 1대 = 직원 700명 대체</strong><span>월 230만 건 고객 상담 처리 · 직원 4,000명 → 2,000명 목표</span></div></div>
+      <div><b>02</b><div><strong>IBM — HR 수백 명 AI로 대체 + 전사 채용 동결</strong><span>AI·IP 관련 인력 외 신규 채용 전면 중단 선언</span></div></div>
+      <div><b>03</b><div><strong>Shopify CEO — "AI 못 한다 증명 못 하면 채용 거절"</strong><span>AI 우선주의 정책으로 모든 채용 기준 재설계</span></div></div>
+      <div><b>04</b><div><strong>인도 주니어 개발자 수요 30~40% 급감</strong><span>단순 코딩·고객 응대 자동화로 아웃소싱 강국 직격탄</span></div></div>
+    </div>
+    <div class="band lime">2024년 한 해만 AI 도입으로 2만 명 이상 감원 · McKinsey</div>
+  </div>
+</section>
+
+<!-- 08 사라지는 직업 / 살아남는 직업 -->
+<section class="slide one">
+  <div class="copy">
+    <h2>사라지는 직업과 <span class="accent">살아남는</span> 직업</h2>
+    <p class="body">기준은 단순하다. AI가 대체할 수 있는 일인가, 없는 일인가.</p>
+  </div>
+  <div>
+    <div class="duo">
+      <div class="card" style="min-height:0;border-top:3px solid var(--red)">
+        <h3 style="font-size:15px;color:var(--red);margin-bottom:14px">위험 신호 — 대체 가능</h3>
+        <p style="font-size:14px;line-height:1.8">· <b style="color:var(--ink)">계산원·창구 직원</b> — 결제 자동화<br>· <b style="color:var(--ink)">데이터 입력 담당</b> — 반복 처리<br>· <b style="color:var(--ink)">행정보조·비서</b> — 일정·문서 AI<br>· <b style="color:var(--ink)">콜센터 상담원</b> — RAG 챗봇<br>· <b style="color:var(--ink)">주니어 개발자</b> — 코드 생성 AI</p>
+      </div>
+      <div class="card" style="min-height:0;border-top:3px solid var(--green)">
+        <h3 style="font-size:15px;color:var(--green);margin-bottom:14px">기회 신호 — 가치 상승</h3>
+        <p style="font-size:14px;line-height:1.8">· <b style="color:var(--ink)">도메인 전문가 + AI</b> — 조합형<br>· <b style="color:var(--ink)">AI 기획·오케스트레이션</b> — 설계자<br>· <b style="color:var(--ink)">데이터 분석가</b> — 의사결정<br>· <b style="color:var(--ink)">사이버보안 전문가</b> — AI 감시<br>· <b style="color:var(--ink)">고객 경험 설계자</b> — 감성·맥락</p>
+      </div>
+      <div class="band full">AI를 모르는 사람이 AI를 아는 사람에게 대체되는 시대</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- [NEW] AGI 이후 — 완성된 상품만 남는다 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>AGI 이후엔 <span class="accent">완성된 상품</span>만 남는다</h1>
+    <p class="body">AI가 AI를 만드는 시대가 오면, 내부를 이해하는 창이 닫힌다.</p>
+  </div>
+  <div>
+    <div class="flow">
+      <span><b style="display:block;font-size:16px;margin-bottom:4px">지금</b>원리를 배울 수 있는 시대</span>
+      <i>→</i>
+      <span><b style="display:block;font-size:16px;margin-bottom:4px">AGI 전환점</b>AI가 AI를 설계하기 시작</span>
+      <i>→</i>
+      <strong><b style="display:block;font-size:16px;margin-bottom:4px">AGI 이후</b>완성품 구독·구매만 가능</strong>
+    </div>
+    <div class="band">지금 배우는 것은 <b>AGI 이후에도 남는 자산</b>이다 — 원리를 아는 사람은 새 도구가 나와도 빠르게 적응한다</div>
+  </div>
+</section>
+
+<!-- [NEW] 소비자 vs 생산자 -->
+<section class="slide one">
+  <div class="copy">
+    <h2>AI 시대의 <span class="accent">두 계층</span></h2>
+    <p class="body">격차는 단순히 잘 쓰고 못 쓰는 수준이 아니다. 소비하는 사람과 생산하는 사람으로 갈린다.</p>
+  </div>
+  <div>
+    <div class="duo">
+      <div class="card" style="min-height:260px;border-top:5px solid #c74740">
+        <h3 style="font-size:16px;color:#c74740;margin-bottom:14px">소비자 (Consumer)</h3>
+        <p style="font-size:14px;line-height:1.85">
+          · 완성된 AI 상품을 <b style="color:var(--ink)">구독·구매</b>한다<br>
+          · 제공자의 가격·기능·정책에 <b style="color:var(--ink)">종속</b>된다<br>
+          · $20 → $100 → $500 — <b style="color:var(--ink)">요금은 계속 오른다</b><br>
+          · AGI 이후 선택지가 줄어든다
+        </p>
+      </div>
+      <div class="card" style="min-height:260px;border-top:5px solid #167746">
+        <h3 style="font-size:16px;color:#167746;margin-bottom:14px">생산자 (Producer)</h3>
+        <p style="font-size:14px;line-height:1.85">
+          · 필요한 AI를 <b style="color:var(--ink)">직접 설계·자동화</b>한다<br>
+          · 라이프루프·워크플로를 <b style="color:var(--ink)">자체 구축</b>한다<br>
+          · API만 쓰면 되니 <b style="color:var(--ink)">비용 통제 가능</b><br>
+          · AGI 이후에도 원리 기반으로 적응
+        </p>
+      </div>
+      <div class="band full">생산자가 되기 위해 개발자가 될 필요는 없다 — <b style="font-size:inherit;color:var(--lime)">설계할 줄 아는 사람</b>이면 된다</div>
+    </div>
+  </div>
+</section>
+
+<!-- [NEW] 지금이 마지막 기회 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>이 창은 <span class="accent">영원히</span><br>열려 있지 않다</h1>
+    <p class="body">배울 수 있는 시기는 기술이 이해 가능한 수준에 있을 때뿐이다.</p>
+  </div>
+  <div>
+    <div class="steps">
+      <div><b>01</b><div><strong>과거 — 너무 어려웠다</strong><span>코딩·수학·논문 필수 — 일반인 접근 불가. 배우려 해도 배울 수 없었다</span></div></div>
+      <div><b style="background:var(--lime);color:var(--ink)">02</b><div><strong>지금 — 배울 수 있다 ✓</strong><span>프롬프트·에이전트·루프 엔지니어링 — 지금이 진입 비용이 가장 낮은 시점</span></div></div>
+      <div><b style="background:#c74740">03</b><div><strong>AGI 이후 — 창이 닫힌다</strong><span>AI가 AI를 만들어 내부 구조가 불투명해진다 — 이해의 기회가 사라진다</span></div></div>
+    </div>
+    <div class="band lime">지금 배우는 사람은 AGI 이후에도 원리로 적응한다 — 지금 안 배우면 완성품을 살 수밖에 없다</div>
+  </div>
+</section>
+
+<!-- [NEW] 당신의 선택 -->
+<section class="slide title">
+  <div class="copy" style="max-width:900px">
+    <p class="kicker">당신에게 묻는다</p>
+    <h1>AI가 세상을 바꾸는 동안<br><span class="accent">당신은 어느 쪽에 있을 것인가?</span></h1>
+    <p class="body" style="font-size:20px">지금 이 순간에도 격차는 벌어지고 있다.<br>소비자로 살 것인가, 생산자로 살 것인가.</p>
+    <div class="close" style="margin-top:28px"><span>지금 여기 있다는 것 — 그게 이미 생산자로 가는 첫 걸음이다</span></div>
+  </div>
+</section>
+
+<!-- 09 지금 당장 할 것 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>지금 당장 할 수 있는<br><span class="accent">첫 걸음</span></h1>
+    <p class="body">거창하게 시작할 필요 없다. 가장 귀찮은 반복 업무 하나부터다.</p>
+  </div>
+  <div>
+    <div class="steps">
+      <div><b>01</b><div><strong>반복 업무 하나를 꺼낸다</strong><span>매주 쓰는 공문, 안내문, 회의록, 보고서 — 아무거나 하나</span></div></div>
+      <div><b>02</b><div><strong>AI에게 그대로 시켜본다</strong><span>"이런 형식으로 써줘" — 처음엔 60점이어도 괜찮다</span></div></div>
+      <div><b>03</b><div><strong>매주 한 가지씩 쌓는다</strong><span>3개월이면 내 업무의 30%가 자동화된다</span></div></div>
+    </div>
+    <div class="band lime">완벽한 프롬프트보다, 일단 써보는 것이 먼저다</div>
+  </div>
+</section>
+
+<!-- 19 AI 구독료 전쟁 — $500 시대 -->
+<section class="slide one">
+  <div class="copy">
+    <p class="kicker">2026년 9월 기준</p>
+    <h2>AI 구독료가 <span class="accent">$500</span>이 됐다</h2>
+    <p class="body">넷플릭스 최고 요금제가 $17인 시대, AI 구독료는 30배가 됐다.<br>이 돈을 내는 기업이 있다는 것 자체가 AI가 핵심 인프라가 됐다는 증거다.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+
+    <!-- Dots / ChatGPT 강조 카드 -->
+    <div style="background:#17231d;color:#f5f2ec;border-radius:14px;padding:24px 28px;grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <div>
+        <div style="font-size:10px;font-weight:900;letter-spacing:.18em;color:#a8c5b0;margin-bottom:6px">OpenAI · 2026.09.29 출시</div>
+        <div style="font-size:22px;font-weight:900;margin-bottom:6px">ChatGPT Dots <span style="background:#c8522a;color:#fff;font-size:11px;font-weight:900;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle">Pro 500</span></div>
+        <div style="font-size:13px;color:#a8c5b0;line-height:1.6">GPT-6 Astra 기반 상시 에이전트 · 자체 클라우드 컴퓨터 보유<br>4,000개 이상 앱 연결 · 24시간 자율 업무 수행 · 내가 자는 동안도 일함</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:11px;font-weight:800;color:#a8c5b0;letter-spacing:.1em">월 구독료</div>
+        <div style="font-size:52px;font-weight:900;color:#fff;line-height:1">$500</div>
+        <div style="font-size:11px;color:#a8c5b0">≈ 70만원/월</div>
+      </div>
+    </div>
+
+    <!-- Grok Heavy -->
+    <div style="background:#fff;border:2px solid #ddd8cf;border-radius:12px;padding:20px 22px">
+      <div style="font-size:10px;font-weight:900;letter-spacing:.15em;color:#6b7f74;margin-bottom:6px">xAI · Grok</div>
+      <div style="font-size:17px;font-weight:900;color:#17231d;margin-bottom:4px">SuperGrok Heavy</div>
+      <div style="font-size:12px;color:#6b7f74;line-height:1.5;margin-bottom:10px">다중 에이전트 병렬 처리<br>X 실시간 데이터 연동</div>
+      <div style="font-size:28px;font-weight:900;color:#c8522a">$300<span style="font-size:12px;color:#6b7f74;font-weight:600">/월</span></div>
+    </div>
+
+    <!-- Claude Max -->
+    <div style="background:#fff;border:2px solid #ddd8cf;border-radius:12px;padding:20px 22px">
+      <div style="font-size:10px;font-weight:900;letter-spacing:.15em;color:#6b7f74;margin-bottom:6px">Anthropic · Claude</div>
+      <div style="font-size:17px;font-weight:900;color:#17231d;margin-bottom:4px">Max 20x</div>
+      <div style="font-size:12px;color:#6b7f74;line-height:1.5;margin-bottom:10px">Pro 대비 20배 사용량<br>코딩 에이전트 대량 사용</div>
+      <div style="font-size:28px;font-weight:900;color:#3d6b4f">$200<span style="font-size:12px;color:#6b7f74;font-weight:600">/월</span></div>
+    </div>
+
+    <!-- Gemini Ultra -->
+    <div style="background:#fff;border:2px solid #ddd8cf;border-radius:12px;padding:20px 22px">
+      <div style="font-size:10px;font-weight:900;letter-spacing:.15em;color:#6b7f74;margin-bottom:6px">Google · Gemini</div>
+      <div style="font-size:17px;font-weight:900;color:#17231d;margin-bottom:4px">AI Ultra</div>
+      <div style="font-size:12px;color:#6b7f74;line-height:1.5;margin-bottom:10px">Gmail·Docs·Sheets 완전 통합<br>멀티모달 최고 티어</div>
+      <div style="font-size:28px;font-weight:900;color:#3d6b4f">$200<span style="font-size:12px;color:#6b7f74;font-weight:600">/월</span></div>
+    </div>
+
+    <!-- Perplexity Max -->
+    <div style="background:#fff;border:2px solid #ddd8cf;border-radius:12px;padding:20px 22px">
+      <div style="font-size:10px;font-weight:900;letter-spacing:.15em;color:#6b7f74;margin-bottom:6px">Perplexity AI</div>
+      <div style="font-size:17px;font-weight:900;color:#17231d;margin-bottom:4px">Max</div>
+      <div style="font-size:12px;color:#6b7f74;line-height:1.5;margin-bottom:10px">여러 AI 동시 비교<br>Model Council 기능</div>
+      <div style="font-size:28px;font-weight:900;color:#3d6b4f">$200<span style="font-size:12px;color:#6b7f74;font-weight:600">/월</span></div>
+    </div>
+
+  </div>
+  <p class="close"><span>AI는 넷플릭스가 아니다 — 핵심 인프라에 돈을 쓰는 시대가 왔다</span></p>
+</section>
+
+
+
+<!-- [NEW] 동아리 문화 — 끌어올리는 집단 -->
+<section class="slide one">
+  <div class="copy">
+    <p class="kicker">AX:IS 동아리 규칙</p>
+    <h2>우리가 함께<br><span class="accent">지키는 것들</span></h2>
+    <p class="body">빠르게 성장하는 집단에는 이유가 있다.<br>규칙이 문화를 만들고, 문화가 성과를 만든다.</p>
+  </div>
+  <div>
+    <div class="steps">
+      <div><b style="background:#e09b4f;color:var(--ink)">01</b><div><strong>우리는 생산자다 — 소비자의 습관을 버려라</strong><span>구독하고 결제하는 것이 익숙하다면, 멈추고 생각해라. 만들어서 쓸 수 있는 것인가? — AX:IS는 소비하는 집단이 아니라 만드는 집단이다</span></div></div>
+      <div><b style="background:#c97fe0">02</b><div><strong>사람이 병목이다 — 내 생각과 지식이 잘못된 것일 수 있다</strong><span>AI 시대에 가장 큰 장애물은 기술이 아니라 사람이다. 내 고정관념과 확신이 성장을 막는다 — 항상 틀릴 수 있다는 전제로 임한다</span></div></div>
+      <div><b style="background:var(--lime);color:var(--ink)">03</b><div><strong>서로 격려해주는 분위기를 만든다</strong><span>잘했을 때 말해주고, 도전할 때 응원해준다. 격려는 공짜인데 효과는 크다 — 이게 AX:IS가 만들어가는 문화다</span></div></div>
+    </div>
+    <div class="band lime">규칙을 지키는 것이 아니라 <b>문화로 스며드는 것</b>이 목표다</div>
+  </div>
+</section>
+
+<!-- [NEW] 이 동아리에서 우리는 무엇을 하는가 -->
+<section class="slide one">
+  <div class="copy">
+    <p class="kicker">AX:IS에서 함께할 것들</p>
+    <h2>이 동아리에서<br><span class="accent">우리는 무엇을 하는가</span></h2>
+    <p class="body">거창한 목표 없어도 된다. 각자의 이유로 시작하면 된다.</p>
+  </div>
+  <div>
+    <div class="duo" style="grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card" style="border-top:5px solid var(--lime)">
+        <h3 style="font-size:15px;color:var(--lime);margin-bottom:10px">🎮 재미 추구</h3>
+        <p style="font-size:14px;line-height:1.85">내가 하고 싶은 걸 AI로 만들어보는 것<br>게임·영상·음악·이미지·글쓰기<br><b>하고 싶은 게 있으면 그게 시작이다</b></p>
+      </div>
+      <div class="card" style="border-top:5px solid #4fa8e0">
+        <h3 style="font-size:15px;color:#4fa8e0;margin-bottom:10px">⚡ 업무효율 추구</h3>
+        <p style="font-size:14px;line-height:1.85">내 업무 중 가장 귀찮은 것 하나 자동화<br>보고서·이메일·정리·분석<br><b>3개월이면 업무의 30%가 달라진다</b></p>
+      </div>
+      <div class="card" style="border-top:5px solid #c97fe0;grid-column:1/2">
+        <h3 style="font-size:15px;color:#c97fe0;margin-bottom:10px">🏆 남기는 것 추구</h3>
+        <p style="font-size:14px;line-height:1.85">타 대학·안양시·지자체와<br>AI 지원·배틀·협업 프로젝트<br><b>AX:IS라는 이름을 남기는 활동</b></p>
+      </div>
+      <div class="card" style="border-top:5px solid #e09b4f;grid-column:2/3">
+        <h3 style="font-size:15px;color:#e09b4f;margin-bottom:10px">💬 의견받아요</h3>
+        <p style="font-size:14px;line-height:1.85">하고 싶은 게 있다면 말해주세요<br>같은 관심사를 가진 사람과<br><b>팀으로 묶어드립니다</b></p>
+      </div>
+    </div>
+    <div class="band">세 방향 중 하나만 골라도 된다 — <b style="color:var(--lime)">지금 이 자리에 있다는 것이 이미 시작이다</b></div>
+  </div>
+</section>
+
+<!-- 07 마무리 -->
+<section class="slide two dense">
+  <div class="copy">
+    <h1>오늘의 <span class="accent">정리</span></h1>
+    <p class="body">AI는 잘 쓰는 사람과 못 쓰는 사람을 가르는 새로운 기준이 됐다.</p>
+    <p class="close"><span>AI 활용 능력은 곧 생존 격차다 — 선택이 아닌 필수</span></p>
+    <p style="margin-top:18px;font-size:13px;font-weight:850;color:#506b40;letter-spacing:.1em">AX:IS(액시스) — Inspire &amp; Share, 함께 성장하는 사람들</p>
+  </div>
+  <div class="duo">
+    <div class="card" style="min-height:285px;background:var(--soft-2)">
+      <h3 style="padding-bottom:15px;border-bottom:1px solid var(--line)">오늘 바로 할 수 있는 것</h3>
+      <p style="font-size:16px;line-height:1.8;margin-top:14px">가장 귀찮은 반복 업무 하나 골라보기,<br>Claude·ChatGPT 계정 만들기,<br>공문 초안 하나 AI에게 맡겨보기</p>
+    </div>
+    <div class="card" style="min-height:285px">
+      <h3 style="padding-bottom:15px;border-bottom:1px solid var(--line)">따로 생각해볼 것</h3>
+      <p style="font-size:16px;line-height:1.8;margin-top:14px">우리 부서의 반복 업무 목록 만들기,<br>AI 활용 기준과 보안 가이드 확인,<br>팀 단위 AI 활용 문화 만들기</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="progress"><i id="bar"></i></div>
+  <div class="tools">
+    <button id="edit" class="edit-btn" title="클릭해서 글자 고치기 (E)">편집</button>
+    <button id="save" class="edit-btn" hidden>저장</button>
+    <button id="reset" class="edit-btn" hidden>원래대로</button>
+    <span class="edit-note" id="note"></span>
+  </div>
+  <span class="hint">← → · SPACE</span>
+  <div class="nav">
+    <button id="prev" aria-label="이전">←</button>
+    <button id="next" aria-label="다음">→</button>
+  </div>
+</footer>
+</main>
+
+<script>
+const s=[...document.querySelectorAll('.slide')],
+      c=document.getElementById('current'),
+      t=document.getElementById('total'),
+      b=document.getElementById('bar'),
+      p=document.getElementById('prev'),
+      n=document.getElementById('next');
+let i=0;
+t.textContent=String(s.length).padStart(2,'0');
+function show(x){
+  i=Math.max(0,Math.min(s.length-1,x));
+  s.forEach((v,k)=>v.classList.toggle('active',k===i));
+  c.textContent=String(i+1).padStart(2,'0');
+  b.style.width=((i+1)/s.length*100)+'%';
+  p.disabled=i===0; n.disabled=i===s.length-1;
+}
+p.onclick=()=>show(i-1); n.onclick=()=>show(i+1);
+addEventListener('keydown',e=>{
+  if(e.target.isContentEditable)return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key))show(i-1);
+});
+show(0);
+const ZK='deck-zoom:'+location.pathname;
+let z=1;
+try{const v=parseFloat(localStorage.getItem(ZK)); if(v)z=v}catch(e){}
+function zoom(v){
+  z=Math.min(2,Math.max(.5,Math.round(v*20)/20));
+  document.documentElement.style.setProperty('--zoom',z);
+  try{localStorage.setItem(ZK,z)}catch(e){}
+}
+zoom(z);
+addEventListener('keydown',e=>{
+  if(e.target.isContentEditable||e.metaKey||e.ctrlKey||e.altKey)return;
+  const k=e.code||'';
+  if(e.key==='['||k==='BracketLeft'){e.preventDefault();zoom(z-.05)}
+  else if(e.key===']'||k==='BracketRight'){e.preventDefault();zoom(z+.05)}
+  else if(e.key==='\\'||e.key==='\u20a9'||k==='Backslash'){e.preventDefault();zoom(1)}
+});
+</script>
+<script>
+(function(){
+  const SEL='.slide h1,.slide h2,.slide h3,.slide p,.slide small,.slide figcaption,'
+           +'.slide .band,.flow span,.flow strong,.steps>div,.breakdown span,.stat';
+  const all=[...document.querySelectorAll(SEL)];
+  const nodes=all.filter(el=>!all.some(o=>o!==el&&o.contains(el)));
+  if(!nodes.length)return;
+  nodes.forEach((el,i)=>el.dataset.edit=i);
+  const FILE=decodeURIComponent(location.pathname.split('/').pop()||'deck.html');
+  const KEY='maro-ppt:'+location.pathname;
+  const origin=nodes.map(el=>el.innerHTML);
+  const PT=(()=>{const d=document.createElement('div');
+    d.setAttribute('contenteditable','plaintext-only');
+    return d.contentEditable==='plaintext-only'})();
+  const bEdit=document.getElementById('edit'),
+        bSave=document.getElementById('save'),
+        bReset=document.getElementById('reset'),
+        note=document.getElementById('note');
+  const FSA=!!window.showSaveFilePicker;
+  let on=false,handle=null,asked=false;
+  try{const s=JSON.parse(localStorage.getItem(KEY)||'{}');
+      for(const k in s) if(nodes[k]) nodes[k].innerHTML=s[k];}catch(e){}
+  function say(t,ms){if(!note)return;note.textContent=t;if(ms)setTimeout(()=>{if(note.textContent===t)note.textContent=''},ms);}
+  function store(){const d={};nodes.forEach((el,i)=>{if(el.innerHTML!==origin[i])d[i]=el.innerHTML});try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+  function mode(v){
+    on=v;document.body.classList.toggle('editing',on);
+    nodes.forEach(el=>on?el.setAttribute('contenteditable',PT?'plaintext-only':'true'):el.removeAttribute('contenteditable'));
+    bEdit.textContent=on?'편집 끝':'편집';bEdit.classList.toggle('on',on);
+    bSave.hidden=!on;bReset.hidden=!on;
+    if(!on){say('',0);return}
+    if(!FSA)say('이 브라우저는 덮어쓰기를 못 한다 — 저장은 내려받기로 떨어진다',6000);
+    else if(!handle&&!asked)say('저장할 때 파일을 한 번 묻는다',7000);
+  }
+  function html(){
+    const c=document.documentElement.cloneNode(true);
+    c.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));
+    c.querySelectorAll('[data-edit]').forEach(e=>e.removeAttribute('data-edit'));
+    c.querySelectorAll('.slide').forEach((e,i)=>e.classList.toggle('active',i===0));
+    c.querySelector('body').classList.remove('editing');
+    c.querySelectorAll('#save,#reset').forEach(e=>e.setAttribute('hidden',''));
+    const e=c.querySelector('#edit');if(e){e.textContent='편집';e.classList.remove('on')}
+    const n=c.querySelector('#note');if(n)n.textContent='';
+    return '<!doctype html>\n'+c.outerHTML;
+  }
+  const idb=()=>new Promise((ok,no)=>{const r=indexedDB.open('maro-ppt',1);r.onupgradeneeded=()=>r.result.createObjectStore('handle');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+  async function recall(){try{const db=await idb();return await new Promise((ok,no)=>{const q=db.transaction('handle').objectStore('handle').get(KEY);q.onsuccess=()=>ok(q.result||null);q.onerror=()=>no(q.error)})}catch(e){return null}}
+  async function keep(h){try{const db=await idb();db.transaction('handle','readwrite').objectStore('handle').put(h,KEY)}catch(e){}}
+  async function target(){
+    if(!FSA)return null;
+    if(!handle)handle=await recall();
+    if(handle){const o={mode:'readwrite'};let p=await handle.queryPermission(o);if(p!=='granted')p=await handle.requestPermission(o);if(p==='granted')return handle;handle=null;}
+    asked=true;
+    handle=await showSaveFilePicker({id:'maro-ppt',suggestedName:FILE,types:[{description:'HTML 문서',accept:{'text/html':['.html']}}]});
+    await keep(handle);return handle;
+  }
+  async function save(){
+    const text=html();
+    try{const h=await target();if(h){const w=await h.createWritable();await w.write(text);await w.close();nodes.forEach((el,i)=>origin[i]=el.innerHTML);try{localStorage.removeItem(KEY)}catch(e){}bSave.textContent='저장됨';setTimeout(()=>bSave.textContent='저장',1600);say(h.name+' 덮어씀',2500);return;}}
+    catch(err){if(err.name==='AbortError'){say('저장을 취소했다',2000);return}say('덮어쓰기가 막혀 내려받기로 저장한다',6000);}
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/html'}));a.download=FILE;a.click();URL.revokeObjectURL(a.href);
+  }
+  bEdit.onclick=()=>mode(!on);
+  bSave.onclick=save;
+  bReset.onclick=()=>{if(!confirm('고친 내용을 모두 되돌립니다.'))return;nodes.forEach((el,i)=>el.innerHTML=origin[i]);try{localStorage.removeItem(KEY)}catch(e){}say('되돌렸다',2000);};
+  document.addEventListener('input',e=>{if(e.target.closest('[data-edit]'))store()});
+  addEventListener('keydown',e=>{
+    if(e.target.isContentEditable){
+      if((e.metaKey||e.ctrlKey)&&(e.key==='s'||e.key==='S'||e.key==='ㄴ'||e.code==='KeyS')){e.preventDefault();save()}
+      if(e.key==='Escape')e.target.blur();return;
+    }
+    if((e.metaKey||e.ctrlKey)&&(e.key==='s'||e.key==='S'||e.key==='ㄴ'||e.code==='KeyS')&&on){e.preventDefault();save();return}
+    if(e.key==='e'||e.key==='E'||e.key==='ㄷ'||e.key==='ㄸ'||e.code==='KeyE'){e.preventDefault();mode(!on)}
+  });
+})();
+</script>
+</body>
+</html>

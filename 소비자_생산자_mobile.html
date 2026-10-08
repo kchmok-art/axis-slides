@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>소비자로 살 것인가, 생산자로 살 것인가 (모바일)</title>
+<style>
+:root{--bg:#0d0f14;--paper:#13161e;--ink:#eef0f4;--muted:#7a8190;
+  --accent:#4f8eff;--accent2:#ff6b35;--green:#3ecf8e;--line:#22262f}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+  background:#060709;color:var(--ink);line-height:1.7}
+body{max-width:480px;margin:0 auto;padding:16px 16px 60px}
+
+.card{background:var(--paper);border-radius:18px;padding:26px 22px;
+  margin-bottom:14px;border:1.5px solid var(--line)}
+.card.dark{background:#0a0c10;border-color:#1a1e28}
+.card-num{font-size:10px;font-weight:900;letter-spacing:.2em;
+  color:var(--accent);margin-bottom:8px}
+.card-num.red{color:var(--accent2)}
+.card-num.green{color:var(--green)}
+.card h2{font-size:24px;font-weight:900;line-height:1.28;
+  letter-spacing:-0.8px;margin-bottom:8px}
+.card .lead{font-size:13px;color:var(--muted);line-height:1.7}
+.band{border-radius:10px;padding:12px 16px;font-size:13px;
+  font-weight:700;line-height:1.6;margin-top:14px}
+.band.dark{background:rgba(255,255,255,.04);color:#999;border-left:3px solid var(--accent)}
+.band.orange{background:rgba(255,107,53,.1);color:#ffb08a;border-left:3px solid var(--accent2)}
+.band.green{background:rgba(62,207,142,.08);color:#7fe8b8;border-left:3px solid var(--green)}
+
+.stat-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.stat-item{background:rgba(79,142,255,.07);border:1px solid rgba(79,142,255,.25);
+  border-radius:12px;padding:14px 16px}
+.stat-item .si-label{font-size:10px;font-weight:900;letter-spacing:.15em;
+  color:var(--accent);margin-bottom:4px}
+.stat-item .si-val{font-size:22px;font-weight:900;color:var(--accent);margin-bottom:4px}
+.stat-item p{font-size:12px;color:var(--muted);line-height:1.5}
+
+.flow-v{display:flex;flex-direction:column;gap:0;margin-top:12px}
+.fv-item{padding:14px 16px;background:var(--bg);border:1.5px solid var(--line);border-radius:0}
+.fv-item:first-child{border-radius:12px 12px 0 0}
+.fv-item:last-child{border-radius:0 0 12px 12px}
+.fv-item.accent-card{border-color:var(--accent);background:rgba(79,142,255,.07)}
+.fv-item.red-card{border-color:var(--accent2);background:rgba(255,107,53,.07)}
+.fv-item small{font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--muted)}
+.fv-item.accent-card small{color:var(--accent)}
+.fv-item.red-card small{color:var(--accent2)}
+.fv-item b{font-size:15px;font-weight:900;display:block;margin:4px 0}
+.fv-item p{font-size:12px;color:var(--muted);line-height:1.5}
+.fv-arrow{text-align:center;font-size:16px;color:var(--muted);padding:2px 0;
+  background:var(--bg);border-left:1.5px solid var(--line);border-right:1.5px solid var(--line)}
+
+.duo{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.duo-card{border-radius:12px;padding:18px 18px;border:1.5px solid var(--line)}
+.duo-card.blue{border-color:var(--accent);background:rgba(79,142,255,.06)}
+.duo-card.orange{border-color:var(--accent2);background:rgba(255,107,53,.06)}
+.duo-card .dc-label{font-size:10px;font-weight:900;letter-spacing:.15em;margin-bottom:6px}
+.duo-card.blue .dc-label{color:var(--accent)}
+.duo-card.orange .dc-label{color:var(--accent2)}
+.duo-card h3{font-size:17px;font-weight:900;margin-bottom:8px}
+.duo-card.blue h3{color:var(--accent)}
+.duo-card.orange h3{color:var(--accent2)}
+.duo-card ul{padding-left:16px;font-size:12px;color:var(--muted);line-height:1.9;margin:0}
+
+.tl-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.tl-item{display:flex;gap:12px;padding:12px 14px;border-radius:10px;
+  border:1.5px solid var(--line);background:var(--bg)}
+.tl-item.now{border-color:var(--green);background:rgba(62,207,142,.05)}
+.tl-item.future{border-color:var(--accent2);background:rgba(255,107,53,.05)}
+.tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.tl-item.now .tl-dot{background:var(--green)}
+.tl-item.future .tl-dot{background:var(--accent2)}
+.tl-time{font-size:10px;font-weight:900;width:50px;flex-shrink:0;color:var(--muted)}
+.tl-item.now .tl-time{color:var(--green)}
+.tl-item.future .tl-time{color:var(--accent2)}
+.tl-body b{font-size:13px;font-weight:900;display:block;margin-bottom:2px}
+.tl-body span{font-size:11px;color:var(--muted);line-height:1.5}
+
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.choice-card{border-radius:14px;padding:20px 16px;text-align:center}
+.choice-card.c-blue{background:rgba(79,142,255,.1);border:1.5px solid rgba(79,142,255,.4)}
+.choice-card.c-orange{background:rgba(255,107,53,.1);border:1.5px solid rgba(255,107,53,.4)}
+.choice-card .cc-icon{font-size:28px;margin-bottom:8px}
+.choice-card h3{font-size:16px;font-weight:900;margin-bottom:6px}
+.choice-card.c-blue h3{color:var(--accent)}
+.choice-card.c-orange h3{color:var(--accent2)}
+.choice-card p{font-size:11px;color:var(--muted);line-height:1.5}
+
+.mem-grid{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.mem-item{background:rgba(255,255,255,.04);border-radius:10px;padding:14px 16px;border:1px solid #1e2230}
+.mem-item .ml{font-size:10px;font-weight:900;letter-spacing:.15em;color:var(--green);margin-bottom:6px}
+.mem-item p{font-size:13px;color:#bbb;line-height:1.7}
+
+.top-bar{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 4px 6px;margin-bottom:4px}
+.top-bar .brand{font-size:11px;font-weight:900;letter-spacing:.15em;color:#555;text-transform:uppercase}
+.top-bar .count{font-size:11px;color:#555}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="brand">AI Transformation</span>
+  <span class="count">10장</span>
+</div>
+
+<!-- 01 표지 -->
+<div class="card dark">
+  <div class="card-num red">01 · AGI 이후의 세계</div>
+  <h2>소비자로 살 것인가,<br><span style="color:var(--green)">생산자</span>로 살 것인가</h2>
+  <p class="lead">지금은 AI를 배울 수 있는 시대다. 하지만 이 창이 영원히 열려 있지는 않다.</p>
+  <div class="band orange">AI를 아는 사람과 모르는 사람의 격차 — 지금 시작되고 있다.</div>
+</div>
+
+<!-- 02 도입 -->
+<div class="card">
+  <div class="card-num green">02 · 지금 이 순간</div>
+  <h2>지금 AI는 누구나<br>접근하고 배울 수 있다</h2>
+  <div class="stat-list">
+    <div class="stat-item">
+      <div class="si-label">지금의 AI</div>
+      <div class="si-val">접근 가능</div>
+      <p>누구나 브라우저에서 사용. 월 $20으로 전문가 수준 도구</p>
+    </div>
+    <div class="stat-item">
+      <div class="si-label">진입 장벽</div>
+      <div class="si-val">최저점</div>
+      <p>코딩 없이도 자동화 가능. 지금이 학습 비용이 가장 낮은 시점</p>
+    </div>
+  </div>
+  <div class="band dark">기술은 쉬워졌지만 아직 모두가 모른다. 이 갭이 곧 닫힌다.</div>
+</div>
+
+<!-- 03 AGI -->
+<div class="card">
+  <div class="card-num">03 · 핵심 개념</div>
+  <h2>AGI — 다음 단계가<br>다가오고 있다</h2>
+  <div class="flow-v">
+    <div class="fv-item accent-card"><small>지금 · AI</small><b>특화 AI</b><p>사람이 배워서 쓰는 도구</p></div>
+    <div class="fv-arrow">↓</div>
+    <div class="fv-item" style="border-color:#6b4fff;background:rgba(107,79,255,.07)"><small>전환점</small><b style="color:#9b7fff">AGI 임계점</b><p>인간 수준 범용 추론, 스스로 개선</p></div>
+    <div class="fv-arrow">↓</div>
+    <div class="fv-item red-card"><small>AGI 이후</small><b>완성된 상품의 시대</b><p>AI가 AI를 만드는 시대. 내부 불투명</p></div>
+  </div>
+  <div class="band orange">OpenAI·Anthropic·Google이 <b>2026~2028년</b>을 가시권으로 보고 있다.</div>
+</div>
+
+<!-- 04 AGI 이후 -->
+<div class="card">
+  <div class="card-num red">04 · AGI 이후 시나리오</div>
+  <h2>완성된 상품만<br>남는 세상</h2>
+  <div class="tl-list">
+    <div class="tl-item now"><div class="tl-dot"></div><div class="tl-time">지금</div><div class="tl-body"><b>배울 수 있는 시대</b><span>원리를 이해하고 직접 만들 수 있다</span></div></div>
+    <div class="tl-item future"><div class="tl-dot"></div><div class="tl-time">전환점</div><div class="tl-body"><b>창이 닫히기 시작한다</b><span>AI가 스스로 AI를 설계. 인간 이해 범위 초과</span></div></div>
+    <div class="tl-item future"><div class="tl-dot"></div><div class="tl-time">AGI 이후</div><div class="tl-body"><b>완성된 상품만 존재</b><span>구독·구매만 가능. 직접 만드는 사람은 지금 배운 사람들</span></div></div>
+  </div>
+  <div class="band orange">지금 배우는 것은 <b>AGI 이후에도 남는 자산</b>이다.</div>
+</div>
+
+<!-- 05 격차 -->
+<div class="card">
+  <div class="card-num red">05 · 새로운 계층 격차</div>
+  <h2>AI를 아는 사람과<br>모르는 사람의 거리</h2>
+  <div class="duo">
+    <div class="duo-card blue">
+      <div class="dc-label">생산자</div>
+      <h3>AI를 만든다</h3>
+      <ul><li>직접 설계·자동화</li><li>AGI 이후에도 적응</li><li>비용 통제 가능</li></ul>
+    </div>
+    <div class="duo-card orange">
+      <div class="dc-label">소비자</div>
+      <h3>AI를 산다</h3>
+      <ul><li>구독·구매 종속</li><li>요금 계속 오름</li><li>격차는 벌어진다</li></ul>
+    </div>
+  </div>
+  <div class="band orange">Klarna 챗봇 1대 = 직원 700명 대체. <b>숫자가 이미 말하고 있다.</b></div>
+</div>
+
+<!-- 06 소비자 vs 생산자 -->
+<div class="card">
+  <div class="card-num">06 · 두 개의 길</div>
+  <h2>소비자와 생산자,<br>무엇이 다른가</h2>
+  <div class="duo">
+    <div class="duo-card orange">
+      <div class="dc-label">소비자 (Consumer)</div>
+      <h3>완성된 AI를 산다</h3>
+      <ul><li>구독·종속</li><li>$20→$500 상승</li><li>내 데이터 제공자 서버</li></ul>
+    </div>
+    <div class="duo-card blue">
+      <div class="dc-label">생산자 (Producer)</div>
+      <h3>필요한 AI를 만든다</h3>
+      <ul><li>직접 설계</li><li>비용 통제</li><li>내 데이터 내 시스템</li></ul>
+    </div>
+  </div>
+  <div class="band dark">생산자가 되기 위해 개발자가 될 필요 없다. <b style="color:#eee">설계할 줄 아는 사람</b>이면 된다.</div>
+</div>
+
+<!-- 07 지금이 기회 -->
+<div class="card">
+  <div class="card-num green">07 · 왜 지금인가</div>
+  <h2>이 창은<br>영원히 열려 있지 않다</h2>
+  <div class="flow-v">
+    <div class="fv-item" style="border-color:#333"><small>과거 · 불가능</small><b style="color:#555">너무 어려웠다</b><p>코딩·수학 필수. 일반인 접근 불가</p></div>
+    <div class="fv-arrow">↓</div>
+    <div class="fv-item accent-card"><small>지금 · 가능 ✓</small><b>배울 수 있다</b><p>프롬프트·에이전트. 누구나 시작 가능</p></div>
+    <div class="fv-arrow">↓</div>
+    <div class="fv-item red-card"><small>AGI 이후 · 닫힘</small><b>이해 불가</b><p>AI가 AI를 만들어 내부 불투명</p></div>
+  </div>
+  <div class="band green">지금 배우는 사람은 <b>AGI 이후에도 원리로 적응</b>한다.</div>
+</div>
+
+<!-- 08 생산자의 길 -->
+<div class="card">
+  <div class="card-num green">08 · 생산자의 길</div>
+  <h2>생산자는 이렇게<br>시작한다</h2>
+  <div class="tl-list">
+    <div class="tl-item now"><div class="tl-dot"></div><div class="tl-time">1단계</div><div class="tl-body"><b>업무 패턴 파악</b><span>반복하는 일이 무엇인지 정의한다</span></div></div>
+    <div class="tl-item now"><div class="tl-dot"></div><div class="tl-time">2단계</div><div class="tl-body"><b>워크플로 설계</b><span>순서를 그리고 AI가 대신할 단계를 찾는다</span></div></div>
+    <div class="tl-item now"><div class="tl-dot"></div><div class="tl-time">3단계</div><div class="tl-body"><b>라이프루프 만들기</b><span>Goal → Cadence → Tools → Exit 설계</span></div></div>
+    <div class="tl-item now"><div class="tl-dot"></div><div class="tl-time">4단계</div><div class="tl-body"><b>루프 돌리고 개선</b><span>60점 시작 → 루프가 돌수록 90점으로</span></div></div>
+  </div>
+  <div class="band green">설계 능력 = <b>AI가 반복할 구조를 짜는 능력</b></div>
+</div>
+
+<!-- 09 선택 -->
+<div class="card dark">
+  <div class="card-num red" style="text-align:center">09 · 당신에게 묻는다</div>
+  <h2 style="text-align:center;color:#fff">AI가 세상을 바꾸는 동안<br>당신은 어느 쪽에 있을 것인가?</h2>
+  <p style="font-size:13px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.7">
+    지금 이 순간에도 격차는 벌어지고 있다.<br>AGI 이후엔 선택지가 두 개뿐이다.
+  </p>
+  <div class="choice-grid">
+    <div class="choice-card c-orange">
+      <div class="cc-icon">💳</div>
+      <h3>소비자</h3>
+      <p>완성된 AI 상품을<br>구독·구매한다</p>
+    </div>
+    <div class="choice-card c-blue">
+      <div class="cc-icon">⚙️</div>
+      <h3>생산자</h3>
+      <p>필요한 AI를<br>직접 설계한다</p>
+    </div>
+  </div>
+</div>
+
+<!-- 10 마무리 -->
+<div class="card dark">
+  <div class="card-num green">10 · 마무리</div>
+  <h2 style="color:#fff">지금 배우는 것이<br><span style="color:var(--green)">가장 싼 투자</span>다</h2>
+  <div class="mem-grid">
+    <div class="mem-item"><div class="ml">기억할 것 01</div><p>지금 AI는 배울 수 있다. AGI 이후 이 창은 닫힌다.</p></div>
+    <div class="mem-item"><div class="ml">기억할 것 02</div><p>AGI 이후엔 소비자·생산자로 영원히 갈린다. 격차는 복리다.</p></div>
+    <div class="mem-item"><div class="ml">기억할 것 03</div><p>생산자가 되려면 개발자가 아니라 설계자가 되면 된다.</p></div>
+    <div class="mem-item"><div class="ml">기억할 것 04</div><p>60점으로 시작해도 된다. 루프를 돌리면 90점으로 간다.</p></div>
+  </div>
+  <div class="band green" style="margin-top:14px">당신이 지금 여기 있다는 것 — 그게 이미 생산자로 가는 첫 걸음이다.</div>
+</div>
+
+</body>
+</html>
