@@ -4,7 +4,7 @@ AI · 개발 · 인프라 핵심 용어 **191개**를 쉬운 비유로 정리했
 
 - 용어마다 **한 줄 요약 · 비유 설명 · 헷갈리는 점 · 카톡 대화 예시 · 연결 용어**가 있습니다.
 - 찾는 법: 아래 분류를 누르거나, 문서 안에서 `Ctrl+F`(휴대폰은 브라우저 메뉴의 '페이지에서 찾기').
-- 검색 · 필터가 되는 화면판: [AI 용어집 (PC)](https://kchmok-art.github.io/axis-slides/AI_%EC%9A%A9%EC%96%B4%EC%A7%91.html)
+- 웹 주소: https://kchmok-art.github.io/axis-slides/glossary/
 
 ## 분류
 

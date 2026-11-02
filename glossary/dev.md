@@ -1,6 +1,6 @@
 # 개발 — 34개
 
-[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 검색·필터 화면판: [AI 용어집](https://kchmok-art.github.io/axis-slides/AI_%EC%9A%A9%EC%96%B4%EC%A7%91.html)
+[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 찾기: `Ctrl+F`
 
 웹·앱 개발에 필요한 기초 개념. 프론트엔드·백엔드·API·라우팅 등 개발자가 일상적으로 사용하는 용어
 

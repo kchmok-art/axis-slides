@@ -1,6 +1,6 @@
 # AX·전환 — 3개
 
-[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 검색·필터 화면판: [AI 용어집](https://kchmok-art.github.io/axis-slides/AI_%EC%9A%A9%EC%96%B4%EC%A7%91.html)
+[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 찾기: `Ctrl+F`
 
 AI를 활용해 업무·조직·삶의 방식을 바꾸는 변화와 전략. DX에서 AX로의 전환, 업무 자동화, 생산자/소비자 구분 등
 

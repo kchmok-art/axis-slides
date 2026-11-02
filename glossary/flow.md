@@ -1,6 +1,6 @@
 # 흐름 — 24개
 
-[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 검색·필터 화면판: [AI 용어집](https://kchmok-art.github.io/axis-slides/AI_%EC%9A%A9%EC%96%B4%EC%A7%91.html)
+[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 찾기: `Ctrl+F`
 
 여러 단계가 이어지는 과정(사이클 · 파이프라인 · 지도)을 순서대로 정리한 항목
 

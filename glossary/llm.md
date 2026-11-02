@@ -1,6 +1,6 @@
 # LLM·생성형 AI — 6개
 
-[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 검색·필터 화면판: [AI 용어집](https://kchmok-art.github.io/axis-slides/AI_%EC%9A%A9%EC%96%B4%EC%A7%91.html)
+[← 용어집 목차](README.md) · 업데이트 2026-11-02 · 찾기: `Ctrl+F`
 
 GPT, Claude, Gemini 같은 대형 언어 모델과 관련된 개념. 토큰, 컨텍스트, 프롬프트, RAG 등 LLM이 작동하는 원리와 활용법
 
