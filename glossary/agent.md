@@ -302,7 +302,7 @@ n8n은 노드(블록)를 드래그&드롭으로 연결해 자동화 워크플로
 \[lecture\_015 루프 엔지니어링 입문\]  
 Geoffrey Huntley가 2025년 7월 'Ralph'라고 부른 방식. 밤새 돌려 프로젝트를 완성했다.  
 
-코드: while :; do cat PROMPT.md | claude ; done  
+코드: while :; do cat PROMPT.md \| claude ; done  
 
 특징 3가지:  
 - 매 바퀴 새 머리로 시작 — 지난 대화를 기억하지 않는다
@@ -333,7 +333,7 @@ Geoffrey Huntley가 2025년 7월 'Ralph'라고 부른 방식. 밤새 돌려 프�
 > **🙋 B** 아니, 그게 뭔데?
 >
 > **💬 A** 제일 단순한 루프야. 한 줄이면 돼  
-> while :; do cat PROMPT.md | claude ; done
+> while :; do cat PROMPT.md \| claude ; done
 >
 > **🙋 B** 그냥 같은 지시를 계속 주는 거네?
 >
